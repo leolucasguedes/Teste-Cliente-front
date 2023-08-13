@@ -2,16 +2,34 @@ import React, { useState, useEffect } from "react";
 import api from "../services/api";
 import styled from "styled-components";
 import { BsTrash } from "react-icons/bs";
+import { AiFillEdit } from "react-icons/ai";
 
 interface Client {
   id: number;
   name: string;
 }
 
+interface NewClient {
+  Name: string;
+}
+
 function Historic() {
   const [clients, setClients] = useState<Client[]>([]);
+  const [newName, setNewName] = useState<NewClient>({ Name: "" });
+  const [updateBox, setUpdateBox] = useState(false);
+  const [idUPDT, setIdUPDT] = useState(0);
 
   useEffect(() => {
+    setClients([
+      {
+        id: 1,
+        name: "Rodrigo",
+      },
+      {
+        id: 2,
+        name: "Leonardo",
+      },
+    ]);
     loadClients();
   }, []);
 
@@ -34,6 +52,25 @@ function Historic() {
     promise.catch((err) => console.log(err.response));
   }
 
+  const handleButtonClick = (id: number) => {
+    setUpdateBox(!updateBox);
+    setIdUPDT(id);
+  };
+
+
+  function updateClient(e: React.FormEvent<HTMLFormElement>, id: number) {
+    e.preventDefault();
+    const promise = api.put(`/api/client/${id}`, newName);
+    promise.then((res) => {
+      setNewName({ Name: "" });
+    });
+    promise.catch((e) => {
+      const message = e.response.data;
+      setNewName({ Name: "" });
+      alert(`Dados inválidos: ${message}`);
+    });
+  }
+
   return (
     <>
       <Main>
@@ -44,10 +81,27 @@ function Historic() {
             return (
               <ClientBox key={id}>
                 <Trash onClick={() => deleteClient(id)} />
+                <Edit onClick={() => handleButtonClick(id)} />
                 <h1>{name}</h1>
               </ClientBox>
             );
           })}
+          {updateBox ? (
+                  <form onSubmit={(e) => updateClient(e, idUPDT)}>
+                    <Update
+                      type="text"
+                      placeholder="Nome"
+                      onChange={(e) =>
+                        setNewName({ ...newName, Name: e.target.value })
+                      }
+                      value={newName.Name}
+                      required
+                    />
+                    <UpdateBT type="submit">Atualizar</UpdateBT>
+                  </form>
+                ) : (
+                  <></>
+                )}
         </DivInfo>
       </Main>
     </>
@@ -114,5 +168,51 @@ export const Trash = styled(BsTrash)`
   right: 15px;
   color: #030303;
   font-size: 17px;
+  cursor: pointer;
+`;
+
+export const Edit = styled(AiFillEdit)`
+  position: absolute;
+  top: 10px;
+  right: 45px;
+  color: #030303;
+  font-size: 17px;
+  cursor: pointer;
+`;
+
+export const Update = styled.input`
+  position: absolute;
+  top: 260px;
+  right: 50px;
+  width: 429px;
+  height: 65px;
+  border: solid 2px red;
+  border-radius: 6px;
+  margin-bottom: 13px;
+  font-size: 27px;
+  font-family: oswald;
+  padding-left: 17px;
+  margin-bottom: 40px;
+
+  input::placeholder {
+    padding-left: 17px;
+  }
+`;
+
+export const UpdateBT = styled.button`
+  position: absolute;
+  top: 330px;
+  right: 50px;
+  color: white;
+  background-color: #1877f2;
+  border: none;
+  width: 429px;
+  height: 65px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 27px;
+  font-family: oswald;
   cursor: pointer;
 `;

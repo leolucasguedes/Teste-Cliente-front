@@ -16,6 +16,7 @@ function SignUp() {
     setLoading(true);
     const promise = api.post("/api/client", client);
     promise.then((res) => {
+      setClient({ Name: "" });
       setLoading(false);
     });
     promise.catch((e) => {
