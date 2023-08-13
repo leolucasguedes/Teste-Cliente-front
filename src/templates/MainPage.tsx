@@ -47,7 +47,7 @@ const Main = styled.main`
   justify-content: center;
   nav {
     top: 50px;
-    left: 350px;
+    left: 360px;
     height: 100px;
     width: 200px;
     display: flex;

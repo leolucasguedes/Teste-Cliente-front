@@ -16,7 +16,7 @@ function Historic() {
   }, []);
 
   function loadClients() {
-    const promise = api.get(`/`);
+    const promise = api.get(`/api/client`);
     promise.then((response) => {
       const { data } = response;
       setClients(data);
@@ -25,7 +25,7 @@ function Historic() {
   }
 
   function deleteClient(id: number) {
-    const promise = api.delete(`/client/${id}`);
+    const promise = api.delete(`/api/client/${id}`);
     promise.then(() => {
       setClients((prevClients) =>
         prevClients.filter((client) => client.id !== id)
@@ -86,7 +86,7 @@ export const DivInfo = styled.div`
 `;
 
 export const ClientBox = styled.div`
-  width: 600px;
+  width: 350px;
   height: 120px;
   display: flex;
   flex-direction: column;
@@ -94,16 +94,17 @@ export const ClientBox = styled.div`
   background-color: #ffffff;
   border: solid 1px gray;
   border-radius: 6px;
+  margin-top: 20px;
   margin-bottom: 20px;
   position: relative;
 
   h1 {
     font-family: oswald;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 500;
     position: absolute;
-    top: 11px;
-    left: 22px;
+    bottom: 50px;
+    left: 20px;
   }
 `;
 

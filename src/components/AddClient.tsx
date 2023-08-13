@@ -4,25 +4,23 @@ import api from "../services/api";
 import Button from "./Button";
 
 interface Client {
-  name: string;
+  Name: string;
 }
 
 function SignUp() {
   const [loading, setLoading] = useState(false);
-  const [client, setClient] = useState<Client>({ name: "" });
+  const [client, setClient] = useState<Client>({ Name: "" });
 
   function postClient(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
-    const promise = api.post("/", client);
+    const promise = api.post("/api/client", client);
     promise.then((res) => {
-      const user = res.data;
-      localStorage.setItem("user", JSON.stringify(user));
       setLoading(false);
     });
     promise.catch((e) => {
       const message = e.response.data;
-      setClient({ name: "" });
+      setClient({ Name: "" });
       setLoading(false);
       alert(`Dados inválidos: ${message}`);
     });
@@ -34,8 +32,8 @@ function SignUp() {
         <input
           type="text"
           placeholder="Nome"
-          onChange={(e) => setClient({ ...client, name: e.target.value })}
-          value={client.name}
+          onChange={(e) => setClient({ ...client, Name: e.target.value })}
+          value={client.Name}
           required
         />
         <Button loading={loading} />
@@ -54,14 +52,14 @@ const Main = styled.div`
   align-items: center;
   justify-content: center;
   position: relative;
-  margin-right: 70px;
+  margin-right: 170px;
   h1 {
     color: #000000;
     font-size: 46px;
     font-family: millenial;
     position: absolute;
     top: 210px;
-    right: 160px;
+    right: 150px;
   }
   form {
     display: flex;

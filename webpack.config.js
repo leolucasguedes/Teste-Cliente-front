@@ -21,7 +21,6 @@ const webpackConfig = {
           loader: "ts-loader",
         },
       },
-      // ... outras regras para processar outros tipos de arquivos
     ],
   },
   plugins: [
