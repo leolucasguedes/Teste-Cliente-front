@@ -20,7 +20,6 @@ function Historic() {
   const [idUPDT, setIdUPDT] = useState(0);
 
   useEffect(() => {
-    setClients([]);
     loadClients();
   }, []);
 
