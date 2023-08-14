@@ -71,4 +71,8 @@ const Main = styled.main`
       cursor: pointer;
     }
   }
+  @media (max-width: 1000px) {
+    nav {
+      margin-top: -60px;
+  }
 `;

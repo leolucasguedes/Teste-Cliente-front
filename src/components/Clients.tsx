@@ -3,21 +3,16 @@ import api from "../services/api";
 import styled from "styled-components";
 import { BsTrash } from "react-icons/bs";
 import { AiFillEdit } from "react-icons/ai";
+import UpdateClient from "./UpdateBox";
 
 interface Client {
   id: number;
   name: string;
 }
 
-interface NewClient {
-  Name: string;
-}
-
 function Historic() {
   const [clients, setClients] = useState<Client[]>([]);
-  const [newName, setNewName] = useState<NewClient>({ Name: "" });
-  const [updateBox, setUpdateBox] = useState(false);
-  const [idUPDT, setIdUPDT] = useState(0);
+  const [idUPDT, setIdUPDT] = useState<number | null>(null);
 
   useEffect(() => {
     loadClients();
@@ -43,23 +38,13 @@ function Historic() {
   }
 
   const handleButtonClick = (id: number) => {
-    setUpdateBox(!updateBox);
     setIdUPDT(id);
   };
 
-
-  function updateClient(e: React.FormEvent<HTMLFormElement>, id: number) {
-    e.preventDefault();
-    const promise = api.put(`/api/client/${id}`, newName);
-    promise.then((res) => {
-      setNewName({ Name: "" });
-    });
-    promise.catch((e) => {
-      const message = e.response.data;
-      setNewName({ Name: "" });
-      alert(`Dados inválidos: ${message}`);
-    });
-  }
+  const handleUpdate = () => {
+    setIdUPDT(null);
+    loadClients();
+  };
 
   return (
     <>
@@ -68,30 +53,30 @@ function Historic() {
           <h1>Aqui estão os cadastros anteriores!</h1>
           {clients.map((client) => {
             const { id, name } = client;
-            return (
-              <ClientBox key={id}>
-                <Trash onClick={() => deleteClient(id)} />
-                <Edit onClick={() => handleButtonClick(id)} />
-                <h1>{name}</h1>
-              </ClientBox>
-            );
+            if (!idUPDT) {
+              return (
+                <ClientBox key={id}>
+                  <Trash onClick={() => deleteClient(id)} />
+                  <Edit onClick={() => handleButtonClick(id)} />
+                  <h1>{name}</h1>
+                </ClientBox>
+              );
+            } else if (idUPDT === id) {
+              return (
+                <ClientBox key={id}>
+                  <Trash onClick={() => deleteClient(id)} />
+                  <UpdateClient id={id} onUpdate={handleUpdate} />
+                </ClientBox>
+              );
+            } else {
+              return (
+                <ClientBox key={id}>
+                  <Trash onClick={() => deleteClient(id)} />
+                  <h1>{name}</h1>
+                </ClientBox>
+              );
+            }
           })}
-          {updateBox ? (
-                  <form onSubmit={(e) => updateClient(e, idUPDT)}>
-                    <Update
-                      type="text"
-                      placeholder="Nome"
-                      onChange={(e) =>
-                        setNewName({ ...newName, Name: e.target.value })
-                      }
-                      value={newName.Name}
-                      required
-                    />
-                    <UpdateBT type="submit">Atualizar</UpdateBT>
-                  </form>
-                ) : (
-                  <></>
-                )}
         </DivInfo>
       </Main>
     </>
@@ -100,7 +85,7 @@ function Historic() {
 
 export default Historic;
 
-export const Main = styled.main`
+const Main = styled.main`
   background-color: #efeef3;
   height: 100%;
   width: 535px;
@@ -111,7 +96,7 @@ export const Main = styled.main`
   margin-right: 70px;
 `;
 
-export const DivInfo = styled.div`
+const DivInfo = styled.div`
   width: 500px;
   height: 810px;
   display: flex;
@@ -129,7 +114,7 @@ export const DivInfo = styled.div`
   }
 `;
 
-export const ClientBox = styled.div`
+const ClientBox = styled.div`
   width: 350px;
   height: 120px;
   display: flex;
@@ -152,7 +137,7 @@ export const ClientBox = styled.div`
   }
 `;
 
-export const Trash = styled(BsTrash)`
+const Trash = styled(BsTrash)`
   position: absolute;
   top: 10px;
   right: 15px;
@@ -161,48 +146,11 @@ export const Trash = styled(BsTrash)`
   cursor: pointer;
 `;
 
-export const Edit = styled(AiFillEdit)`
+const Edit = styled(AiFillEdit)`
   position: absolute;
   top: 10px;
   right: 45px;
   color: #030303;
   font-size: 17px;
-  cursor: pointer;
-`;
-
-export const Update = styled.input`
-  position: absolute;
-  top: 260px;
-  right: 50px;
-  width: 429px;
-  height: 65px;
-  border: solid 2px red;
-  border-radius: 6px;
-  margin-bottom: 13px;
-  font-size: 27px;
-  font-family: oswald;
-  padding-left: 17px;
-  margin-bottom: 40px;
-
-  input::placeholder {
-    padding-left: 17px;
-  }
-`;
-
-export const UpdateBT = styled.button`
-  position: absolute;
-  top: 330px;
-  right: 50px;
-  color: white;
-  background-color: #1877f2;
-  border: none;
-  width: 429px;
-  height: 65px;
-  border-radius: 6px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 27px;
-  font-family: oswald;
   cursor: pointer;
 `;
